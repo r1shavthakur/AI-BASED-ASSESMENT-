@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Scholars</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Verdana', sans-serif;
+      background-color: #f9f9f9;
+      color: #444;
+    }
+    .navbar {
+      background-color: #4caf50;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar h1 {
+      margin: 0;
+    }
+    .navbar button {
+      background-color: white;
+      color: #4caf50;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .navbar button:hover {
+      background-color: #45a049;
+      color: white;
+    }
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    .progress-bar {
+      background: #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .progress-bar div {
+      height: 20px;
+      background: #4caf50;
+      width: 70%;
+    }
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      text-align: center;
+    }
+    .login-box input {
+      margin-bottom: 1rem;
+    }
+    .login-box button {
+      width: 100%;
+    }
+    .forgot-link {
+      margin-top: 1rem;
+      color: #4caf50;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .alternate-page {
+      text-align: center;
+      padding: 2rem;
+    }
+    .alternate-page img {
+      max-width: 100%;
+      height: auto;
+      margin: 1rem 0;
+    }
+    .section {
+      padding: 2rem;
+      text-align: center;
+    }
+    .section:nth-child(even) {
+      background-color: #f0f0f0;
+    }
+    .section img {
+      max-width: 100%;
+      height: auto;
+      margin: 1rem 0;
+    }
+    .login-section {
+      background-color: #4caf50;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    .login-section h2 {
+      margin-bottom: 1rem;
+    }
+    .login-section input {
+      width: 80%;
+      max-width: 400px;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 4px;
+    }
+    .login-section button {
+      background-color: white;
+      color: #4caf50;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .login-section button:hover {
+      background-color: #45a049;
+      color: white;
+    }
+    .signup-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .signup-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      text-align: center;
+    }
+    .signup-box input {
+      margin-bottom: 1rem;
+    }
+    .signup-box button {
+      width: 100%;
+    }
+    .signup-link {
+      margin-top: 1rem;
+      color: #4caf50;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .ai-bot {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .ai-bot input {
+      width: 80%;
+      max-width: 400px;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .ai-bot button {
+      margin-top: 0.5rem;
+    }
+    .performance-section {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .performance-section table {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+    .performance-section th, .performance-section td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    .performance-section th {
+      background-color: #4caf50;
+      color: white;
+    }
+    .lecture-section {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .lecture-section ul {
+      list-style: none;
+      padding: 0;
+    }
+    .lecture-section li {
+      margin: 0.5rem 0;
+    }
+    .lecture-section a {
+      color: #4caf50;
+      text-decoration: none;
+    }
+    .lecture-section a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <h1>Smart Scholars</h1>
+    <button onclick="showLoginModal()">Login</button>
+  </div>
+
+  <div id="loggedInContent" style="display: none;">
+    <div class="main-container">
+      <div class="grid">
+        <div class="card">
+          <h2>📊 Performance Tracking</h2>
+          <p>Track your performance over the last week, month, and overall progress.</p>
+          <div class="performance-section">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time Period</th>
+                  <th>Quizzes Taken</th>
+                  <th>Average Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Last Week</td>
+                  <td>5</td>
+                  <td>85%</td>
+                </tr>
+                <tr>
+                  <td>Last Month</td>
+                  <td>20</td>
+                  <td>88%</td>
+                </tr>
+                <tr>
+                  <td>Overall</td>
+                  <td>50</td>
+                  <td>90%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h2>📈 AI Analysis</h2>
+          <p>AI analyzes your performance and creates personalized quizzes.</p>
+          <button onclick="generateQuiz()">Generate AI Quiz</button>
+          <p id="quiz-status"></p>
+        </div>
+        <div class="card">
+          <h2>🎓 Lecture Library</h2>
+          <p>Access uploaded lectures to enhance your learning.</p>
+          <div class="lecture-section">
+            <ul>
+              <li><a href="#">Lecture 1: Introduction to AI</a></li>
+              <li><a href="#">Lecture 2: Machine Learning Basics</a></li>
+              <li><a href="#">Lecture 3: Deep Learning Concepts</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <h2>🤖 AI Bot</h2>
+          <p>Ask the AI bot any question or clear your doubts.</p>
+          <div class="ai-bot">
+            <input type="text" id="ai-bot-input" placeholder="Ask me anything..." />
+            <button onclick="askAIBot()">Ask</button>
+            <p id="ai-bot-response"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      &copy; 2025 Smart Scholars
+    </footer>
+  </div>
+
+  <div id="alternateContent">
+    <div class="section">
+      <h2>Welcome to Smart Scholars</h2>
+      <p>Explore our platform to enhance your learning experience.</p>
+      <img src="https://via.placeholder.com/800x400" alt="Learning Image" />
+    </div>
+    <div class="section">
+      <h2>Why Choose Us?</h2>
+      <p>We provide personalized learning experiences powered by AI to help you achieve your goals.</p>
+      <img src="https://via.placeholder.com/800x400" alt="Why Choose Us" />
+    </div>
+    <div class="section">
+      <h2>Features</h2>
+      <ul style="list-style: none; padding: 0;">
+        <li>📊 Track your performance</li>
+        <li>📈 Adaptive learning tailored to your needs</li>
+        <li>🎮 Gamified quizzes and badges</li>
+        <li>🤖 AI-powered chatbot for instant help</li>
+        <li>🎓 Lecture library for self-paced learning</li>
+      </ul>
+      <img src="https://via.placeholder.com/800x400" alt="Features Image" />
+    </div>
+    <div class="login-section">
+      <h2>Login or Sign Up to Get Started</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="handleLogin()">Login</button>
+      <p class="forgot-link" onclick="handleForgotPassword()" style="color: white; cursor: pointer;">Forgot Password?</p>
+      <p class="signup-link" onclick="showSignupModal()" style="color: white; cursor: pointer;">Don't have an account? Sign Up</p>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Smart Scholars
+  </footer>
+
+  <div class="login-modal" id="loginModal" style="display: none;">
+    <div class="login-box">
+      <h2>Login</h2>
+      <input type="text" id="modal-username" placeholder="Username" />
+      <input type="password" id="modal-password" placeholder="Password" />
+      <button onclick="handleModalLogin()">Login</button>
+      <p class="forgot-link" onclick="handleForgotPassword()">Forgot Password?</p>
+      <p class="signup-link" onclick="showSignupModal()">Don't have an account? Sign Up</p>
+    </div>
+  </div>
+
+  <div class="signup-modal" id="signupModal" style="display: none;">
+    <div class="signup-box">
+      <h2>Sign Up</h2>
+      <input type="text" id="signup-username" placeholder="Username" />
+      <input type="email" id="signup-email" placeholder="Email" />
+      <input type="password" id="signup-password" placeholder="Password" />
+      <button onclick="handleSignup()">Sign Up</button>
+      <p class="signup-link" onclick="hideSignupModal()">Already have an account? Login</p>
+    </div>
+  </div>
+
+  <script>
+    function showLoginModal() {
+      document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    function showSignupModal() {
+      document.getElementById('signupModal').style.display = 'flex';
+      document.getElementById('loginModal').style.display = 'none';
+    }
+
+    function hideSignupModal() {
+      document.getElementById('signupModal').style.display = 'none';
+      document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    function handleLogin() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      if (username === "user" && password === "1234") {
+        alert("Login successful!");
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loggedInContent').style.display = 'block';
+        document.getElementById('alternateContent').style.display = 'none';
+      } else {
+        alert("Invalid credentials!");
+      }
+    }
+
+    function handleModalLogin() {
+      const username = document.getElementById('modal-username').value;
+      const password = document.getElementById('modal-password').value;
+      if (username === "user" && password === "1234") {
+        alert("Login successful!");
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loggedInContent').style.display = 'block';
+        document.getElementById('alternateContent').style.display = 'none';
+      } else {
+        alert("Invalid credentials!");
+      }
+    }
+
+    function handleSignup() {
+      const username = document.getElementById('signup-username').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      if (username && email && password) {
+        alert("Signup successful! Please login.");
+        document.getElementById('signupModal').style.display = 'none';
+        document.getElementById('loginModal').style.display = 'flex';
+      } else {
+        alert("Please fill in all fields.");
+      }
+    }
+
+    function handleForgotPassword() {
+      const email = prompt("Enter your registered email:");
+      if (email) {
+        alert("Password reset link sent to " + email);
+      }
+    }
+
+    function fetchAdaptiveContent() {
+      document.getElementById('adaptive-content').innerText = "Personalized content based on your progress.";
+    }
+
+    function generateQuiz() {
+      document.getElementById('quiz-status').innerText = "Generating a personalized quiz...";
+      setTimeout(() => {
+        document.getElementById('quiz-status').innerText = "Quiz Generated: AI-Generated Quiz 1";
+      }, 2000);
+    }
+
+    function submitAnswer() {
+      const answer = document.getElementById('answer').value;
+      if (answer.trim() === "") {
+        document.getElementById('quiz-feedback').innerText = "Please provide an answer.";
+        return;
+      }
+      document.getElementById('quiz-feedback').innerText = "Your answer has been submitted for grading.";
+    }
+
+    function askChatbot() {
+      const message = document.getElementById('chat-input').value;
+      if (message.trim() === "") {
+        document.getElementById('chat-response').innerText = "Please ask a question.";
+        return;
+      }
+      document.getElementById('chat-response').innerText = `You asked: "${message}". AI is processing your query...`;
+    }
+
+    function askAIBot() {
+      const question = document.getElementById('ai-bot-input').value;
+      if (question.trim() === "") {
+        document.getElementById('ai-bot-response').innerText = "Please ask a question.";
+        return;
+      }
+      document.getElementById('ai-bot-response').innerText = `AI Bot: Processing your question...`;
+      setTimeout(() => {
+        document.getElementById('ai-bot-response').innerText = `AI Bot: Here's the answer to your question: "${question}".`;
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
