@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Personalized Learning</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    header {
+      background: #4f46e5;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .login-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .login-box.hidden {
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .login-box input {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 0.5rem;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .forgot-link {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: #4f46e5;
+    }
+    .back-link {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      color: #4f46e5;
+    }
+    .back-link svg {
+      margin-right: 5px;
+    }
+    .password-strength {
+      height: 4px;
+      background: #eee;
+      margin-bottom: 1rem;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .password-strength-bar {
+      height: 100%;
+      width: 0%;
+      background: #ef4444;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+    .resend-code {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .resend-code span {
+      color: #4f46e5;
+      cursor: pointer;
+    }
+    .resend-code span.disabled {
+      color: #999;
+      cursor: not-allowed;
+    }
+    .success-message {
+      text-align: center;
+      color: #10b981;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-modal" id="loginModal">
+    <div class="login-box" id="loginBox">
+      <h2>Login</h2>
+      <input type="text" id="emailOrPhone" placeholder="Email or Mobile Number"/>
+      <input type="password" id="password" placeholder="Password"/>
+      <button onclick="handleAuth()">Login</button>
+      <p class="forgot-link" onclick="showResetStep1()">Forgot password?</p>
+    </div>
+  </div>
+
+  <div class="login-modal" id="forgotPasswordModal" style="display:none;">
+    <!-- Step 1: Enter email/phone -->
+    <div class="login-box" id="resetStep1">
+      <div class="back-link" onclick="backToLogin()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Login
+      </div>
+      <h2>Reset Password</h2>
+      <p>Enter your email or phone to receive a reset code</p>
+      <input type="text" id="resetEmailOrPhone" placeholder="Enter registered email or phone"/>
+      <button onclick="sendResetCode()">Send Code</button>
+    </div>
+
+    <!-- Step 2: Enter code and new password -->
+    <div class="login-box hidden" id="resetStep2">
+      <div class="back-link" onclick="backToResetStep1()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back
+      </div>
+      <h2>Reset Password</h2>
+      <p>Enter the 6-digit code sent to your email/phone</p>
+      <input type="text" id="resetCode" placeholder="Enter 6-digit code" maxlength="6"/>
+      <p>Create a new password</p>
+      <input type="password" id="newPassword" placeholder="Enter new password" oninput="checkPasswordStrength()"/>
+      <div class="password-strength">
+        <div class="password-strength-bar" id="passwordStrengthBar"></div>
+      </div>
+      <button id="resetButton" onclick="resetPassword()" disabled>Reset Password</button>
+      <div class="resend-code">
+        Didn't receive code? <span id="resendLink" onclick="resendCode()">Resend</span>
+        <span id="countdown" class="disabled">(60s)</span>
+      </div>
+    </div>
+
+    <!-- Step 3: Success message -->
+    <div class="login-box hidden" id="resetStep3">
+      <h2>Password Reset</h2>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto; display: block;">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <p class="success-message">Your password has been successfully reset!</p>
+      <button onclick="backToLogin()">Back to Login</button>
+    </div>
+  </div>
+
+  <script>
+    // Current active modal state
+    let currentModal = 'login';
+    let resetCountdown = 60;
+    let countdownInterval;
+
+    // Show login modal
+    function showLogin() {
+      document.getElementById('loginModal').style.display = 'flex';
+      document.getElementById('forgotPasswordModal').style.display = 'none';
+      currentModal = 'login';
+    }
+
+    // Show forgot password modal - step 1
+    function showResetStep1() {
+      document.getElementById('loginModal').style.display = 'none';
+      document.getElementById('forgotPasswordModal').style.display = 'flex';
+      
+      // Hide all steps
+      document.getElementById('resetStep1').classList.remove('hidden');
+      document.getElementById('resetStep2').classList.add('hidden');
+      document.getElementById('resetStep3').classList.add('hidden');
+      
+      currentModal = 'resetStep1';
+    }
+
+    // Show forgot password modal - step 2
+    function showResetStep2() {
+      document.getElementById('resetStep1').classList.add('hidden');
+      document.getElementById('resetStep2').classList.remove('hidden');
+      document.getElementById('resetStep3').classList.add('hidden');
+      
+      currentModal = 'resetStep2';
+      startCountdown();
+    }
+
+    // Show forgot password modal - step 3 (success)
+    function showResetStep3() {
+      document.getElementById('resetStep1').classList.add('hidden');
+      document.getElementById('resetStep2').classList.add('hidden');
+      document.getElementById('resetStep3').classList.remove('hidden');
+      
+      currentModal = 'resetStep3';
+      clearInterval(countdownInterval);
+    }
+
+    // Back to login from any reset step
+    function backToLogin() {
+      showLogin();
+    }
+
+    // Back to step 1 from step 2
+    function backToResetStep1() {
+      showResetStep1();
+    }
+
+    // Send reset code (step 1)
+    function sendResetCode() {
+      const emailOrPhone = document.getElementById('resetEmailOrPhone').value;
+      if (!emailOrPhone) {
+        alert("Please enter your email or phone number");
+        return;
+      }
+      
+      // In a real app, you would send this to your backend
+      console.log("Sending reset code to:", emailOrPhone);
+      
+      // Simulate sending code
+      setTimeout(() => {
+        showResetStep2();
+      }, 500);
+    }
+
+    // Resend code (from step 2)
+    function resendCode() {
+      const resendLink = document.getElementById('resendLink');
+      if (resendLink.classList.contains('disabled')) return;
+      
+      console.log("Resending code...");
+      resetCountdown = 60;
+      startCountdown();
+    }
+
+    // Start countdown for resend
+    function startCountdown() {
+      const resendLink = document.getElementById('resendLink');
+      const countdown = document.getElementById('countdown');
+      
+      resendLink.classList.add('disabled');
+      countdown.textContent = (${resetCountdown}s);
+      
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        resetCountdown--;
+        countdown.textContent = (${resetCountdown}s);
+        
+        if (resetCountdown <= 0) {
+          clearInterval(countdownInterval);
+          resendLink.classList.remove('disabled');
+          countdown.textContent = '';
+        }
+      }, 1000);
+    }
+
+    // Check password strength
+    function checkPasswordStrength() {
+      const password = document.getElementById('newPassword').value;
+      const strengthBar = document.getElementById('passwordStrengthBar');
+      const resetButton = document.getElementById('resetButton');
+      
+      let strength = 0;
+      if (password.length >= 8) strength += 1;
+      if (password.match(/[A-Z]/)) strength += 1;
+      if (password.match(/[0-9]/)) strength += 1;
+      if (password.match(/[^A-Za-z0-9]/)) strength += 1;
+      
+      let width = 0;
+      let color = '#ef4444'; // red
+      
+      if (strength === 1) {
+        width = 25;
+      } else if (strength === 2) {
+        width = 50;
+        color = '#f59e0b'; // orange
+      } else if (strength === 3) {
+        width = 75;
+        color = '#3b82f6'; // blue
+      } else if (strength >= 4) {
+        width = 100;
+        color = '#10b981'; // green
+      }
+      
+      strengthBar.style.width = ${width}%;
+      strengthBar.style.background = color;
+      
+      // Enable button only if password is strong enough
+      resetButton.disabled = strength < 3;
+    }
+
+    // Reset password (step 2)
+    function resetPassword() {
+      const code = document.getElementById('resetCode').value;
+      const newPassword = document.getElementById('newPassword').value;
+      
+      if (!code || code.length !== 6) {
+        alert("Please enter a valid 6-digit code");
+        return;
+      }
+      
+      if (newPassword.length < 8) {
+        alert("Password must be at least 8 characters");
+        return;
+      }
+      
+      // In a real app, you would verify the code and update password
+      console.log("Resetting password with code:", code);
+      
+      // Simulate successful reset
+      setTimeout(() => {
+        showResetStep3();
+      }, 500);
+    }
+
+    // Handle login
+    function handleAuth() {
+      alert("Login functionality would be implemented here");
+    }
+  </script>
+</body>
+</html>
