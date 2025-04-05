@@ -266,7 +266,9 @@
 <body>
   <div class="navbar">
     <h1>Smart Scholars</h1>
-    <button onclick="showLoginModal()">Login</button>
+    <div id="navbar-user">
+      <button onclick="showLoginModal()">Login</button>
+    </div>
   </div>
 
   <div id="loggedInContent" style="display: none;">
@@ -325,9 +327,9 @@
           <h2>🤖 AI Bot</h2>
           <p>Ask the AI bot any question or clear your doubts.</p>
           <div class="ai-bot">
-            <input type="text" id="ai-bot-input" placeholder="Ask me anything..." />
-            <button onclick="askAIBot()">Ask</button>
-            <p id="ai-bot-response"></p>
+            <input type="text" id="userInput" placeholder="Ask me anything..." />
+            <button onclick="sendMessage()">Send</button>
+            <p id="chatbotResponse"></p>
           </div>
         </div>
       </div>
@@ -341,29 +343,40 @@
     <div class="section">
       <h2>Welcome to Smart Scholars</h2>
       <p>Explore our platform to enhance your learning experience.</p>
-      <img src="https://via.placeholder.com/800x400" alt="Learning Image" />
+      <p>At Smart Scholars, we believe in empowering students with cutting-edge AI tools to make learning more engaging, personalized, and effective. Whether you're preparing for exams, exploring new topics, or sharpening your skills, our platform is designed to support your journey every step of the way.</p>
+      <p>Join thousands of learners who are transforming their education with Smart Scholars. Let's make learning smarter, together!</p>
+      <img src="https://blogassets.leverageedu.com/blog/wp-content/uploads/2020/03/24185535/Online-Learning.jpg" alt="Online Learning Image" style="margin-top: 1rem; max-width: 100%; height: 120px;" />
     </div>
     <div class="section">
       <h2>Why Choose Us?</h2>
       <p>We provide personalized learning experiences powered by AI to help you achieve your goals.</p>
-      <img src="https://via.placeholder.com/800x400" alt="Why Choose Us" />
+      <p>Here’s why Smart Scholars stands out:</p>
+      <ul style="list-style: none; padding: 0;">
+        <li>✔️ Tailored learning paths based on your strengths and weaknesses.</li>
+        <li>✔️ AI-powered quizzes and performance tracking to monitor your progress.</li>
+        <li>✔️ Access to a vast library of lectures and resources for self-paced learning.</li>
+        <li>✔️ Gamified learning with badges and rewards to keep you motivated.</li>
+        <li>✔️ 24/7 AI chatbot support to answer your questions instantly.</li>
+      </ul>
+      <p>With Smart Scholars, you’re not just learning; you’re growing smarter every day!</p>
+      <img src="https://st4.depositphotos.com/14431644/20908/i/450/depositphotos_209080064-stock-illustration-writing-note-showing-why-choose.jpg" alt="Why Choose Us Image" style="margin-top: 1rem; max-width: 100%; height: 120px;" />
     </div>
     <div class="section">
       <h2>Features</h2>
       <ul style="list-style: none; padding: 0;">
-        <li>📊 Track your performance</li>
-        <li>📈 Adaptive learning tailored to your needs</li>
-        <li>🎮 Gamified quizzes and badges</li>
-        <li>🤖 AI-powered chatbot for instant help</li>
-        <li>🎓 Lecture library for self-paced learning</li>
+        <li><a href="#" onclick="navigateToPage('track-performance.html')">📊 Track your performance</a></li>
+        <li><a href="#" onclick="navigateToPage('adaptive-learning.html')">📈 Adaptive learning tailored to your needs</a></li>
+        <li><a href="#" onclick="navigateToPage('gamified-quizzes.html')">🎮 Gamified quizzes and badges</a></li>
+        <li><a href="#" onclick="navigateToPage('ai-chatbot.html')">🤖 AI-powered chatbot for instant help</a></li>
+        <li><a href="#" onclick="navigateToPage('lecture-library.html')">🎓 Lecture library for self-paced learning</a></li>
       </ul>
-      <img src="https://via.placeholder.com/800x400" alt="Features Image" />
+      <img src="https://imgs.search.brave.com/IXHeD-zyhR0Vt3ykyurv4jrfNMAw6Sdm-2lEQ23GAlk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sZWFy/bmFsbC51cy9pbWFn/ZXMvYW5kcm9pZC5w/bmc" alt="Features Image" style="margin-top: 1rem; max-width: 100%; height: 120px;" />
     </div>
     <div class="login-section">
       <h2>Login or Sign Up to Get Started</h2>
       <input type="text" id="username" placeholder="Username" />
       <input type="password" id="password" placeholder="Password" />
-      <button onclick="handleLogin()">Login</button>
+      <button id="login-btn">Login</button>
       <p class="forgot-link" onclick="handleForgotPassword()" style="color: white; cursor: pointer;">Forgot Password?</p>
       <p class="signup-link" onclick="showSignupModal()" style="color: white; cursor: pointer;">Don't have an account? Sign Up</p>
     </div>
@@ -396,6 +409,20 @@
   </div>
 
   <script>
+    let isLoggedIn = false; // Simulate login status
+    let loggedInUser = null; // Store logged-in user details
+
+    // Check login state on page load
+    window.onload = function () {
+      const savedLoginState = JSON.parse(localStorage.getItem('loginState'));
+      if (savedLoginState && savedLoginState.isLoggedIn) {
+        isLoggedIn = true;
+        loggedInUser = savedLoginState.username;
+        updateNavbarUser();
+        hideLoginSignupSection();
+      }
+    };
+
     function showLoginModal() {
       document.getElementById('loginModal').style.display = 'flex';
     }
@@ -410,43 +437,99 @@
       document.getElementById('loginModal').style.display = 'flex';
     }
 
-    function handleLogin() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      if (username === "user" && password === "1234") {
-        alert("Login successful!");
-        document.getElementById('loginModal').style.display = 'none';
-        document.getElementById('loggedInContent').style.display = 'block';
-        document.getElementById('alternateContent').style.display = 'none';
-      } else {
-        alert("Invalid credentials!");
-      }
-    }
+    async function handleSignup() {
+      const username = document.getElementById('signup-username').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
 
-    function handleModalLogin() {
-      const username = document.getElementById('modal-username').value;
-      const password = document.getElementById('modal-password').value;
-      if (username === "user" && password === "1234") {
-        alert("Login successful!");
-        document.getElementById('loginModal').style.display = 'none';
-        document.getElementById('loggedInContent').style.display = 'block';
-        document.getElementById('alternateContent').style.display = 'none';
-      } else {
-        alert("Invalid credentials!");
+      if (!username || !email || !password) {
+        alert("Please fill in all fields.");
+        return;
       }
-    }
 
-    function handleSignup() {
-      const username = document.getElementById('signup-username').value;
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      if (username && email && password) {
+      try {
+        const response = await fetch("http://127.0.0.1:8001/api/signup/", { // Ensure correct API URL
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Signup failed.");
+        }
+
+        const data = await response.json();
+        console.log("Signup Response:", data); // Debugging log
         alert("Signup successful! Please login.");
         document.getElementById('signupModal').style.display = 'none';
         document.getElementById('loginModal').style.display = 'flex';
-      } else {
-        alert("Please fill in all fields.");
+      } catch (error) {
+        console.error("Signup error:", error); // Debugging log
+        alert(`An error occurred during signup: ${error.message}`);
       }
+    }
+
+    async function handleLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8001/api/login/", { // Ensure correct API URL
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Login failed.");
+        }
+
+        const data = await response.json();
+        console.log("Login Response:", data); // Debugging log
+        alert("Login successful!");
+        isLoggedIn = true;
+        loggedInUser = data.username;
+        localStorage.setItem('loginState', JSON.stringify({ isLoggedIn: true, username: loggedInUser }));
+        document.getElementById('loginModal').style.display = 'none';
+        updateNavbarUser();
+        hideLoginSignupSection();
+      } catch (error) {
+        console.error("Login error:", error); // Debugging log
+        alert(`An error occurred during login: ${error.message}`);
+      }
+    }
+
+    function handleLogout() {
+      isLoggedIn = false;
+      loggedInUser = null;
+      localStorage.removeItem('loginState');
+      updateNavbarUser();
+      showLoginSignupSection();
+      alert("You have been logged out.");
+    }
+
+    function updateNavbarUser() {
+      const navbarUser = document.getElementById('navbar-user');
+      if (isLoggedIn && loggedInUser) {
+        navbarUser.innerHTML = `<span>Welcome, ${loggedInUser}</span> <button onclick="handleLogout()">Logout</button>`;
+      } else {
+        navbarUser.innerHTML = `<button onclick="showLoginModal()">Login</button>`;
+      }
+    }
+
+    function hideLoginSignupSection() {
+      document.querySelector('.login-section').style.display = 'none';
+    }
+
+    function showLoginSignupSection() {
+      document.querySelector('.login-section').style.display = 'block';
     }
 
     function handleForgotPassword() {
@@ -495,6 +578,151 @@
       setTimeout(() => {
         document.getElementById('ai-bot-response').innerText = `AI Bot: Here's the answer to your question: "${question}".`;
       }, 2000);
+    }
+
+    async function sendMessage() {
+      let userMessage = document.getElementById("userInput").value.trim();
+      let responseBox = document.getElementById("chatbotResponse");
+
+      if (!userMessage) {
+        responseBox.innerHTML = "Please enter a message!";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8001/api/chatbot/", { // Ensure correct API URL
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMessage }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch chatbot response.");
+        }
+
+        const data = await response.json();
+        console.log("Chatbot Response:", data); // Debugging log
+        responseBox.innerHTML = `<strong>Chatbot:</strong> ${data.response}`;
+      } catch (error) {
+        console.error("Chatbot error:", error); // Debugging log
+        responseBox.innerHTML = "Error connecting to chatbot.";
+      }
+    }
+
+    function navigateToPage(page) {
+      if (isLoggedIn) {
+        window.location.href = page;
+      } else {
+        alert("Please login or sign up first.");
+      }
+    }
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("login-btn").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent page reload
+
+        let username = document.querySelector("input[type='text']").value.trim();
+        let password = document.querySelector("input[type='password']").value.trim();
+
+        if (!username || !password) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        fetch("http://127.0.0.1:8001/api/login/", { // Updated port to 8001
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password })
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Login failed. Please check your credentials.");
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log("Response:", data);
+            alert("Login successful!");
+            isLoggedIn = true;
+            loggedInUser = data.username;
+            localStorage.setItem('loginState', JSON.stringify({ isLoggedIn: true, username: loggedInUser }));
+            document.getElementById('loginModal').style.display = 'none';
+            updateNavbarUser();
+            hideLoginSignupSection();
+          })
+          .catch(error => {
+            console.error("Error:", error);
+            alert(error.message || "An error occurred during login.");
+          });
+      });
+    });
+
+    function updateNavbarUser() {
+      const navbarUser = document.getElementById('navbar-user');
+      if (isLoggedIn && loggedInUser) {
+        navbarUser.innerHTML = `<span>Welcome, ${loggedInUser}</span> <button onclick="handleLogout()">Logout</button>`;
+      } else {
+        navbarUser.innerHTML = `<button onclick="showLoginModal()">Login</button>`;
+      }
+    }
+
+    function hideLoginSignupSection() {
+      document.querySelector('.login-section').style.display = 'none';
+    }
+
+    function handleLogout() {
+      isLoggedIn = false;
+      loggedInUser = null;
+      localStorage.removeItem('loginState');
+      updateNavbarUser();
+      showLoginSignupSection();
+      alert("You have been logged out.");
+    }
+  </script>
+
+  <script>
+    function handleModalLogin() {
+      event.preventDefault(); // Prevent page reload
+
+      let username = document.getElementById("modal-username").value.trim();
+      let password = document.getElementById("modal-password").value.trim();
+
+      if (!username || !password) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      fetch("http://127.0.0.1:8001/api/login/", { // Updated port to 8001
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Login failed. Please check your credentials.");
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Response:", data);
+          alert("Login successful!");
+          isLoggedIn = true;
+          loggedInUser = data.username;
+          localStorage.setItem('loginState', JSON.stringify({ isLoggedIn: true, username: loggedInUser }));
+          document.getElementById('loginModal').style.display = 'none';
+          updateNavbarUser();
+          hideLoginSignupSection();
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert(error.message || "An error occurred during login.");
+        });
     }
   </script>
 </body>
