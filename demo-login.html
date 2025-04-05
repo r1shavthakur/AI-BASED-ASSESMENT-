@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Verdana', sans-serif;
+      background-color: #f9f9f9;
+      color: #444;
+      line-height: 1.6;
+    }
+    .navbar {
+      background-color: #4caf50;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .navbar button {
+      background-color: white;
+      color: #4caf50;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .navbar button:hover {
+      background-color: #45a049;
+      color: white;
+    }
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: #333;
+    }
+    .card p {
+      font-size: 0.95rem;
+      color: #666;
+    }
+    .card button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .card button:hover {
+      background-color: #45a049;
+    }
+    .card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .card ul li {
+      margin: 0.5rem 0;
+    }
+    .card ul li a {
+      color: #4caf50;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    .card ul li a:hover {
+      color: #45a049;
+      text-decoration: underline;
+    }
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+    input[type="text"] {
+      width: 80%;
+      max-width: 400px;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    input[type="text"]:focus {
+      border-color: #4caf50;
+      outline: none;
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <h1>Smart Scholars</h1>
+    <div id="navbar-user">
+      <span>Welcome, Demo User</span>
+      <button onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="grid">
+      <div class="card">
+        <h2>📊 Performance Tracking</h2>
+        <p>Track your performance over the last week, month, and overall progress.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Time Period</th>
+              <th>Quizzes Taken</th>
+              <th>Average Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last Week</td>
+              <td>5</td>
+              <td>85%</td>
+            </tr>
+            <tr>
+              <td>Last Month</td>
+              <td>20</td>
+              <td>88%</td>
+            </tr>
+            <tr>
+              <td>Overall</td>
+              <td>50</td>
+              <td>90%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>📈 AI Analysis</h2>
+        <p>AI analyzes your performance and creates personalized quizzes.</p>
+        <button onclick="alert('AI Quiz Generated!')">Generate AI Quiz</button>
+      </div>
+      <div class="card">
+        <h2>🎓 Lecture Library</h2>
+        <p>Access uploaded lectures to enhance your learning.</p>
+        <ul>
+          <li><a href="#" onclick="navigateToInnerPage('lecture1.html')">Lecture 1: Introduction to AI</a></li>
+          <li><a href="#" onclick="navigateToInnerPage('lecture2.html')">Lecture 2: Machine Learning Basics</a></li>
+          <li><a href="#" onclick="navigateToInnerPage('lecture3.html')">Lecture 3: Deep Learning Concepts</a></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>🤖 AI Bot</h2>
+        <p>Ask the AI bot any question or clear your doubts.</p>
+        <input type="text" id="userInput" placeholder="Ask me anything..." />
+        <button onclick="alert('AI Bot Response: This is a demo response.')">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Smart Scholars
+  </footer>
+
+  <script>
+    function handleLogout() {
+      alert("You have been logged out.");
+      window.location.href = "index.html"; // Redirect to the homepage or login page
+    }
+
+    function navigateToInnerPage(page) {
+      window.location.href = page;
+      sessionStorage.setItem("redirectedFromDemo", "true"); // Mark that the user navigated from the demo page
+    }
+
+    window.addEventListener("popstate", function () {
+      if (sessionStorage.getItem("redirectedFromDemo")) {
+        sessionStorage.removeItem("redirectedFromDemo");
+        window.location.href = "index.html"; // Redirect to the login page
+      }
+    });
+  </script>
+</body>
+</html>
